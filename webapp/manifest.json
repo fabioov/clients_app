@@ -73,6 +73,10 @@
         "dataSource": "mainService",
         "preload": true,
         "settings": {}
+      },
+      "editClient": {
+        "type": "sap.ui.model.json.JSONModel",
+        "uri": "/model/editClient.json"
       }
     },
     "resources": {

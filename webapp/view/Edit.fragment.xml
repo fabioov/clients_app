@@ -1,0 +1,52 @@
+<c:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:c="sap.ui.core"
+	xmlns:f="sap.ui.layout.form"
+	
+>
+	<Dialog
+	id="editClientFragment"
+		title="{= ${editClient>/isEdit} ? ${i18n>editCustomer} : ${i18n>registerCustomer}}"
+	>
+		<f:SimpleForm
+			id="EditForm"
+			editable="true"
+		>
+			<f:content>
+				<Label text="{i18n>cpf}" visible="{= !${editClient>/isEdit}}"/>
+				<MaskInput
+                    visible="{= !${editClient>/isEdit}}"
+					value="{= !${editClient>/isEdit} ? ${i18n>addCpf} : ' ' }"
+					mask="999.999.999-99"
+					placeholder="{i18n>addCPF}"
+					required="{= ${editClient>/isEdit} ? false : true }"
+                    
+				/>
+				<Label text="{i18n>name}"/>
+				<Input
+					value="{= !${editClient>/isEdit} ? ${i18n>addName} : ${ClientName} }"
+					placeholder="{= !${editClient>/isEdit} ? ${i18n>addName} : ' ' }"
+					required="{= ${editClient>/isEdit} ? false : true }"
+				/>
+				<Label text="{i18n>address}"/>
+				<Input
+					value="{= !${editClient>/isEdit} ? ${i18n>addAddress} : ${ClientAddress} }"
+					placeholder="{= !${editClient>/isEdit} ? ${i18n>addAddress} : ' '}"
+					required="{= ${editClient>/isEdit} ? false : true }"
+				/>
+				<Label text="{i18n>phone}"/>
+				<MaskInput
+					value="{= !${editClient>/isEdit} ? ${i18n>addPhone} : ${ClientPhone} }"
+					mask="(99) 9 9999 9999"
+					placeholder="{= !${editClient>/isEdit} ? ${i18n>addPhone} : ' '}"
+					required="{= ${editClient>/isEdit} ? false : true }"
+				/>
+			</f:content>
+		</f:SimpleForm>
+        <buttons>
+            <Button text="{i18n>save_btn}"   type="Emphasized" press=".onSaveBtnPress"/>	
+            <Button text="{i18n>cancel_btn}" type="Default" press=".onCancelBtnPress"/>
+            				
+    </buttons>	
+	</Dialog>
+</c:FragmentDefinition>
