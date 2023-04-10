@@ -16,12 +16,10 @@ sap.ui.define(
       onInit: function () {},
 
       onCreateClient: function (oEvent) {
-        debugger;
-
         var oEditClient = this.getView().getModel("editClient");
         oEditClient.setProperty("/isEdit", false);
         var oView = this.getView();
-
+debugger
         if (!this.byId("openDialog")) {
           Fragment.load({
             id: oView.getId(),
@@ -29,7 +27,6 @@ sap.ui.define(
             controller: this,
           }).then(function (oDialog) {
             oView.addDependent(oDialog);
-
             oDialog.open();
           });
         } else {
@@ -38,7 +35,48 @@ sap.ui.define(
       },
 
       onSaveBtnPress: function () {
-        MessageToast.show("Botão está funcionando!");
+        sap.ui.core.BusyIndicator.show(0);
+        var oView = this.getView();
+
+        var cpfId = oView.byId("cpfClient").getValue();
+        var phone = oView.byId("phoneClient").getValue();
+
+        var cpfNumbers = cpfId.replace(/[.-]/g, "");
+        var phoneSpace = phone.replace(/[()]/g, "");
+        var phoneNumbers = phoneSpace.replace(/\s/g, "");
+
+        var clientFragmentData = [
+          {
+            Id: cpfNumbers,
+            Name: oView.byId("nameClient").getValue(),
+            Address: oView.byId("addressClient").getValue(),
+            Phone: phoneNumbers,
+          },
+        ];
+
+        var payload = {
+          Action: "CREATE",
+          Payload: JSON.stringify(clientFragmentData),
+        };
+
+        var oModel = oView.getModel();
+        var createMessage = oView.getModel("i18n").getProperty("addedClient");
+
+        oModel.create("/JsonCommSet", payload, {
+          success: function (oData, oResponse) {
+            sap.ui.core.BusyIndicator.hide();
+            MessageToast.show(createMessage);
+            oModel.refresh();
+          }.bind(this),
+
+          error: function (oError) {
+            var oSapMessage = JSON.parse(oError.responseText);
+            var msg = oSapMessage.error.message.value;
+            MessageToast.show(msg);
+            this.byId("openDialog").destroy(true);
+            oModel.refresh();
+          },
+        });
       },
 
       onEditClient: function () {
@@ -46,7 +84,7 @@ sap.ui.define(
         oEditClient.setProperty("/isEdit", true);
 
         var oView = this.getView();
-debugger
+        debugger;
         var oSmartTable = this.getView().byId("clientsTable").getTable();
         var aSelectedItems = oSmartTable.getSelectedItems();
 
@@ -56,68 +94,70 @@ debugger
           var sPath = oContext.getPath();
           var oSelectedItemData = oContext.getModel().getProperty(sPath);
           oView.bindElement(sPath);
-      
-        if (!this.byId("editClientFragment")) {
-          Fragment.load({
-            id: oView.getId(),
-            name: "clientsapp.view.Edit",
-            controller: this,
-          }).then(function (oDialog) {
-            oView.addDependent(oDialog);
-            oDialog.open();
-          });
+
+          if (!this.byId("editClientFragment")) {
+            Fragment.load({
+              id: oView.getId(),
+              name: "clientsapp.view.Edit",
+              controller: this,
+            }).then(function (oDialog) {
+              oView.addDependent(oDialog);
+              oDialog.open();
+            });
+          } else {
+            this.byId("editClientFragment").open();
+          }
+        } else if (aSelectedItems.length > 1) {
+          MessageToast.show("Somente 1 cliente pode ser editado por vez.");
         } else {
-          this.byId("editClientFragment").open();
+          MessageToast.show("Selecione ao menos uma linha.");
         }
-      } else if ( aSelectedItems.length > 1 ) {
-
-        MessageToast.show("Somente 1 cliente pode ser editado por vez.");
-
-      }
-      
-      else {
-        MessageToast.show("Selecione ao menos uma linha.");
-    }
       },
 
-      onDeleteBtnPress() {
+      onUpdateBtnPress: function () {},
+
+      onDeleteBtnPress: function () {
         var oView = this.getView();
         var oSmartTable = this.getView().byId("clientsTable").getTable();
-        var SelectedItem = oSmartTable
-          .getModel()
-          .getProperty(oSmartTable._aSelectedPaths.toString());
+        var aSelectedItems = oSmartTable.getSelectedItems();
+        var ClientData = [];
 
-        if (oSmartTable._aSelectedPaths.length < 1) {
-          MessageToast.show("Selecione pelo menos uma linha");
-        } else {
-          var ClientData = [
-            {
-              ClientId: SelectedItem.ClientId,
-              ClientName: SelectedItem.Client,
-              ClientAddress: SelectedItem.ClientAddress,
-              ClientPhone: SelectedItem.ClientPhone,
-            },
-          ];
-          var payload = {
-            Action: "DELETECAR",
-            Payload: JSON.stringify(ClientData),
-          };
+        sap.ui.core.BusyIndicator.show(0);
+        for (var i = 0; i < aSelectedItems.length; i++) {
+          var item = aSelectedItems[i];
+          var context = item.getBindingContext();
+          var obj = context.getProperty(null, context);
 
-          var oModel = oView.getModel();
-          oModel.create("/JsonCommSet", payload, {
-            success: function (oData, oResponse) {
-              MessageToast.show("Perfect!");
-              oModel.refresh();
-            }.bind(this),
-
-            error: function (oError) {
-              var oSapMessage = JSON.parse(oError.responseText);
-              var msg = oSapMessage.error.message.value;
-              MessageToast.show(msg);
-              oModel.refresh();
-            },
+          ClientData.push({
+            Id: obj.ClientId,
           });
         }
+
+        var payload = {
+          Action: "DELETE",
+          Payload: JSON.stringify(ClientData),
+        };
+
+        var oModel = oView.getModel();
+        var deletedMessage = oView
+          .getModel("i18n")
+          .getProperty("deletedClient");
+
+        oModel.create("/JsonCommSet", payload, {
+          success: function (oData, oResponse) {
+            sap.ui.core.BusyIndicator.hide();
+            MessageToast.show(deletedMessage);
+            oModel.refresh();
+          }.bind(this),
+
+          error: function (oError) {
+            var oSapMessage = JSON.parse(oError.responseText);
+            var msg = oSapMessage.error.message.value;
+            MessageToast.show(msg);
+            sap.ui.core.BusyIndicator.hide();
+            oModel.refresh();
+          },
+        });
       },
 
       onCancelBtnPress: function () {

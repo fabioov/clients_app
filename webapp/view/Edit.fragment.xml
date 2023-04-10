@@ -15,6 +15,7 @@
 			<f:content>
 				<Label text="{i18n>cpf}" visible="{= !${editClient>/isEdit}}"/>
 				<MaskInput
+				id="cpfClient"
                     visible="{= !${editClient>/isEdit}}"
 					value="{= !${editClient>/isEdit} ? ${i18n>addCpf} : ' ' }"
 					mask="999.999.999-99"
@@ -24,18 +25,21 @@
 				/>
 				<Label text="{i18n>name}"/>
 				<Input
+				id="nameClient"
 					value="{= !${editClient>/isEdit} ? ${i18n>addName} : ${ClientName} }"
 					placeholder="{= !${editClient>/isEdit} ? ${i18n>addName} : ' ' }"
 					required="{= ${editClient>/isEdit} ? false : true }"
 				/>
 				<Label text="{i18n>address}"/>
 				<Input
+				id="addressClient"
 					value="{= !${editClient>/isEdit} ? ${i18n>addAddress} : ${ClientAddress} }"
 					placeholder="{= !${editClient>/isEdit} ? ${i18n>addAddress} : ' '}"
 					required="{= ${editClient>/isEdit} ? false : true }"
 				/>
 				<Label text="{i18n>phone}"/>
 				<MaskInput
+				id="phoneClient"
 					value="{= !${editClient>/isEdit} ? ${i18n>addPhone} : ${ClientPhone} }"
 					mask="(99) 9 9999 9999"
 					placeholder="{= !${editClient>/isEdit} ? ${i18n>addPhone} : ' '}"
