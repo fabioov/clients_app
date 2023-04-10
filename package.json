@@ -37,5 +37,8 @@
             "ui5-task-flatten-library"
         ]
     },
-    "sapuxLayer": "CUSTOMER_BASE"
+    "sapuxLayer": "CUSTOMER_BASE",
+    "dependencies": {
+        "openai": "^3.2.1"
+    }
 }
