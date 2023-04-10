@@ -13,13 +13,20 @@ sap.ui.define(
     "use strict";
 
     return Controller.extend("clientsapp.controller.View1", {
-      onInit: function () {},
+      onInit: function () {
+        debugger
+        var oViewModel = new JSONModel({
+          busy: false,
+          delay: 0,
+        });
+
+      },
 
       onCreateClient: function (oEvent) {
         var oEditClient = this.getView().getModel("editClient");
         oEditClient.setProperty("/isEdit", false);
         var oView = this.getView();
-debugger
+        debugger
         if (!this.byId("openDialog")) {
           Fragment.load({
             id: oView.getId(),
@@ -64,17 +71,19 @@ debugger
 
         oModel.create("/JsonCommSet", payload, {
           success: function (oData, oResponse) {
-            sap.ui.core.BusyIndicator.hide();
             MessageToast.show(createMessage);
             oModel.refresh();
+            this.onCancelBtnPress();
+            sap.ui.core.BusyIndicator.hide();
           }.bind(this),
 
           error: function (oError) {
+            debugger
             var oSapMessage = JSON.parse(oError.responseText);
             var msg = oSapMessage.error.message.value;
             MessageToast.show(msg);
-            this.byId("openDialog").destroy(true);
             oModel.refresh();
+            sap.ui.core.BusyIndicator.hide();
           },
         });
       },
@@ -114,7 +123,7 @@ debugger
         }
       },
 
-      onUpdateBtnPress: function () {},
+      onUpdateBtnPress: function () { },
 
       onDeleteBtnPress: function () {
         var oView = this.getView();
@@ -165,7 +174,7 @@ debugger
         oModel.resetChanges();
 
         if (this.byId("openDialog")) {
-          this.byId("openDialog").destroy(true);
+          this.byId("openDialog").close();
         } else if (this.byId("editClientFragment")) {
           this.byId("editClientFragment").destroy(true);
         }
