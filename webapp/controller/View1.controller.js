@@ -14,19 +14,18 @@ sap.ui.define(
 
     return Controller.extend("clientsapp.controller.View1", {
       onInit: function () {
-        debugger
+        debugger;
         var oViewModel = new JSONModel({
           busy: false,
           delay: 0,
         });
-
       },
 
       onCreateClient: function (oEvent) {
         var oEditClient = this.getView().getModel("editClient");
         oEditClient.setProperty("/isEdit", false);
         var oView = this.getView();
-        debugger
+        debugger;
         if (!this.byId("openDialog")) {
           Fragment.load({
             id: oView.getId(),
@@ -51,41 +50,47 @@ sap.ui.define(
         var cpfNumbers = cpfId.replace(/[.-]/g, "");
         var phoneSpace = phone.replace(/[()]/g, "");
         var phoneNumbers = phoneSpace.replace(/\s/g, "");
+        debugger;
+        if (cpfNumbers === "") {
+          var msgCpfEmpty = oView.getModel("i18n").getProperty("cpfEmpty");
+          MessageToast.show(msgCpfEmpty);
+          sap.ui.core.BusyIndicator.hide();
+        } else {
+          var clientFragmentData = [
+            {
+              Id: cpfNumbers,
+              Name: oView.byId("nameClient").getValue(),
+              Address: oView.byId("addressClient").getValue(),
+              Phone: phoneNumbers,
+            },
+          ];
 
-        var clientFragmentData = [
-          {
-            Id: cpfNumbers,
-            Name: oView.byId("nameClient").getValue(),
-            Address: oView.byId("addressClient").getValue(),
-            Phone: phoneNumbers,
-          },
-        ];
+          var payload = {
+            Action: "CREATE",
+            Payload: JSON.stringify(clientFragmentData),
+          };
 
-        var payload = {
-          Action: "CREATE",
-          Payload: JSON.stringify(clientFragmentData),
-        };
+          var oModel = oView.getModel();
+          var createMessage = oView.getModel("i18n").getProperty("addedClient");
 
-        var oModel = oView.getModel();
-        var createMessage = oView.getModel("i18n").getProperty("addedClient");
+          oModel.create("/JsonCommSet", payload, {
+            success: function (oData, oResponse) {
+              MessageToast.show(createMessage);
+              oModel.refresh();
+              this.onCancelBtnPress();
+              sap.ui.core.BusyIndicator.hide();
+            }.bind(this),
 
-        oModel.create("/JsonCommSet", payload, {
-          success: function (oData, oResponse) {
-            MessageToast.show(createMessage);
-            oModel.refresh();
-            this.onCancelBtnPress();
-            sap.ui.core.BusyIndicator.hide();
-          }.bind(this),
-
-          error: function (oError) {
-            debugger
-            var oSapMessage = JSON.parse(oError.responseText);
-            var msg = oSapMessage.error.message.value;
-            MessageToast.show(msg);
-            oModel.refresh();
-            sap.ui.core.BusyIndicator.hide();
-          },
-        });
+            error: function (oError) {
+              debugger;
+              var oSapMessage = JSON.parse(oError.responseText);
+              var msg = oSapMessage.error.message.value;
+              MessageToast.show(msg);
+              oModel.refresh();
+              sap.ui.core.BusyIndicator.hide();
+            },
+          });
+        }
       },
 
       onEditClient: function () {
@@ -93,7 +98,7 @@ sap.ui.define(
         oEditClient.setProperty("/isEdit", true);
 
         var oView = this.getView();
-        debugger;
+
         var oSmartTable = this.getView().byId("clientsTable").getTable();
         var aSelectedItems = oSmartTable.getSelectedItems();
 
@@ -101,7 +106,6 @@ sap.ui.define(
           var oSelectedItem = aSelectedItems[0];
           var oContext = oSelectedItem.getBindingContext();
           var sPath = oContext.getPath();
-          var oSelectedItemData = oContext.getModel().getProperty(sPath);
           oView.bindElement(sPath);
 
           if (!this.byId("editClientFragment")) {
@@ -123,7 +127,55 @@ sap.ui.define(
         }
       },
 
-      onUpdateBtnPress: function () { },
+      onUpdateBtnPress: function () {
+        var oView = this.getView();
+
+        var oSmartTable = this.getView().byId("clientsTable").getTable();
+        var aSelectedItem = oSmartTable
+          .getSelectedItems()[0]
+          .getBindingContext()
+          .getProperty();
+
+        var phone = oView.byId("phoneClient").getValue();
+
+        var phoneSpace = phone.replace(/[()]/g, "");
+        var phoneNumbers = phoneSpace.replace(/\s/g, "");
+
+        var clientUpdateData = [
+          {
+            Id: aSelectedItem.ClientId,
+            Name: oView.byId("nameClient").getValue(),
+            Address: oView.byId("addressClient").getValue(),
+            Phone: phoneNumbers,
+          },
+        ];
+
+        var payload = {
+          Action: "UPDATE",
+          Payload: JSON.stringify(clientUpdateData),
+        };
+
+        var oModel = oView.getModel();
+        var createMessage = oView.getModel("i18n").getProperty("updatedClient");
+
+        oModel.create("/JsonCommSet", payload, {
+          success: function (oData, oResponse) {
+            MessageToast.show(createMessage);
+            oModel.refresh();
+            this.onCancelBtnPress();
+            sap.ui.core.BusyIndicator.hide();
+          }.bind(this),
+
+          error: function (oError) {
+            debugger;
+            var oSapMessage = JSON.parse(oError.responseText);
+            var msg = oSapMessage.error.message.value;
+            MessageToast.show(msg);
+            oModel.refresh();
+            sap.ui.core.BusyIndicator.hide();
+          },
+        });
+      },
 
       onDeleteBtnPress: function () {
         var oView = this.getView();
@@ -133,12 +185,10 @@ sap.ui.define(
 
         sap.ui.core.BusyIndicator.show(0);
         for (var i = 0; i < aSelectedItems.length; i++) {
-          var item = aSelectedItems[i];
-          var context = item.getBindingContext();
-          var obj = context.getProperty(null, context);
+          var item = aSelectedItems[i].getBindingContext().getProperty();
 
           ClientData.push({
-            Id: obj.ClientId,
+            Id: item.ClientId,
           });
         }
 
@@ -168,6 +218,43 @@ sap.ui.define(
           },
         });
       },
+
+      // onPrintClient: function () {
+
+      //   var oModel = this.getView().getModel();
+
+      //   var oSmartTable = this.getView().byId("clientsTable").getTable();
+      //   var aSelectedItems = oSmartTable.getSelectedItems();
+      //   var item = aSelectedItems[0].getBindingContext().getProperty();
+
+      //   var ClientData = [];
+
+      //   ClientData.push({
+      //     Id: item.ClientId,
+      //   });
+
+      // var payload = {
+      //   Action: "DELETE",
+      //   Payload: JSON.stringify(ClientData),
+      // };
+
+      //   oModel.read("/PrintSmartFormsSet", payload, {
+      //     success: function (oData, oResponse) {
+      //       sap.ui.core.BusyIndicator.hide();
+      //       MessageToast.show(deletedMessage);
+      //       oModel.refresh();
+      //     }.bind(this),
+
+      //     error: function (oError) {
+      //       var oSapMessage = JSON.parse(oError.responseText);
+      //       var msg = oSapMessage.error.message.value;
+      //       MessageToast.show(msg);
+      //       sap.ui.core.BusyIndicator.hide();
+      //       oModel.refresh();
+      //     },
+      //   });
+
+      // },
 
       onCancelBtnPress: function () {
         var oModel = this.getView().getModel();

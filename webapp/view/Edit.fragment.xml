@@ -2,10 +2,9 @@
 	xmlns="sap.m"
 	xmlns:c="sap.ui.core"
 	xmlns:f="sap.ui.layout.form"
-	
 >
 	<Dialog
-	id="editClientFragment"
+		id="editClientFragment"
 		title="{= ${editClient>/isEdit} ? ${i18n>editCustomer} : ${i18n>registerCustomer}}"
 	>
 		<f:SimpleForm
@@ -13,44 +12,55 @@
 			editable="true"
 		>
 			<f:content>
-				<Label text="{i18n>cpf}" visible="{= !${editClient>/isEdit}}"/>
+				<Label
+					text="{i18n>cpf}"
+					visible="{= !${editClient>/isEdit}}"
+				/>
 				<MaskInput
-				id="cpfClient"
-                    visible="{= !${editClient>/isEdit}}"
-					value="{= !${editClient>/isEdit} ? ${i18n>addCpf} : ' ' }"
+					id="cpfClient"
+					visible="{= !${editClient>/isEdit}}"
 					mask="999.999.999-99"
-					placeholder="{i18n>addCPF}"
 					required="{= ${editClient>/isEdit} ? false : true }"
-                    
 				/>
 				<Label text="{i18n>name}"/>
 				<Input
-				id="nameClient"
-					value="{= !${editClient>/isEdit} ? ${i18n>addName} : ${ClientName} }"
-					placeholder="{= !${editClient>/isEdit} ? ${i18n>addName} : ' ' }"
+					id="nameClient"
+					value="{= !${editClient>/isEdit} ? '' : ${ClientName} }"
 					required="{= ${editClient>/isEdit} ? false : true }"
 				/>
 				<Label text="{i18n>address}"/>
 				<Input
-				id="addressClient"
-					value="{= !${editClient>/isEdit} ? ${i18n>addAddress} : ${ClientAddress} }"
-					placeholder="{= !${editClient>/isEdit} ? ${i18n>addAddress} : ' '}"
+					id="addressClient"
+					value="{= !${editClient>/isEdit} ? '' : ${ClientAddress} }"
 					required="{= ${editClient>/isEdit} ? false : true }"
 				/>
 				<Label text="{i18n>phone}"/>
 				<MaskInput
-				id="phoneClient"
-					value="{= !${editClient>/isEdit} ? ${i18n>addPhone} : ${ClientPhone} }"
+					id="phoneClient"
+					value="{= !${editClient>/isEdit} ? '' : ${ClientPhone} }"
 					mask="(99) 9 9999 9999"
-					placeholder="{= !${editClient>/isEdit} ? ${i18n>addPhone} : ' '}"
 					required="{= ${editClient>/isEdit} ? false : true }"
 				/>
 			</f:content>
 		</f:SimpleForm>
-        <buttons>
-            <Button text="{i18n>save_btn}"   type="Emphasized" press=".onSaveBtnPress"/>	
-            <Button text="{i18n>cancel_btn}" type="Default" press=".onCancelBtnPress"/>
-            				
-    </buttons>	
+		<buttons>
+			<Button
+				text="{i18n>save_btn}"
+				type="Emphasized"
+				press=".onSaveBtnPress"
+				visible="{= ${editClient>/isEdit} ? false : true }"
+			/>
+			<Button
+				text="{i18n>btn_edit}"
+				type="Emphasized"
+				press=".onUpdateBtnPress"
+				visible="{= !${editClient>/isEdit} ? false : true }"
+			/>
+			<Button
+				text="{i18n>cancel_btn}"
+				type="Default"
+				press=".onCancelBtnPress"
+			/>
+		</buttons>
 	</Dialog>
 </c:FragmentDefinition>
