@@ -14,11 +14,7 @@ sap.ui.define(
 
     return Controller.extend("clientsapp.controller.View1", {
       onInit: function () {
-        debugger;
-        var oViewModel = new JSONModel({
-          busy: false,
-          delay: 0,
-        });
+
       },
 
       onCreateClient: function (oEvent) {
