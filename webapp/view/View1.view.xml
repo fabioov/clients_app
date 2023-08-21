@@ -1,71 +1,94 @@
 <mvc:View
-	controllerName="clientsapp.controller.View1"
-	xmlns:mvc="sap.ui.core.mvc"
-	displayBlock="true"
-	xmlns="sap.m"
-	xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
+  controllerName="clientsapp.controller.View1"
+  xmlns:mvc="sap.ui.core.mvc"
+  displayBlock="true"
+  xmlns="sap.m"
+  xmlns:smartTable="sap.ui.comp.smarttable"
+  xmlns:semantic="sap.m.semantic"
+  xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
+  xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+  xmlns:f="sap.f"
 >
-	<Page
-		id="page"
-		title="{i18n>title}"
-	>
-		<content>
-			<smartTable:SmartTable
-				xmlns:smartTable="sap.ui.comp.smarttable"
-				xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
-				entitySet="ZFS_CDS_CLIENTS"
-				id="clientsTable"
-				tableType="ResponsiveTable"
-				header="{i18n>clients}"
-				persistencyKey="SmartTableAnalytical_Explored"
-				class="sapUiResponsiveContentPadding"
-				app:useSmartToggle="true"
-				initiallyVisibleFields="ClientId,ClientName,ClientAddress,ClientPhone"
-				enableAutoBinding="true"
-				showFullScreenButton="true"
-			>
-				<Table
-					id="Table"
-					mode="MultiSelect"
-				/>
-				<smartTable:customToolbar>
-					<OverflowToolbar id="Overflow">
-						<ToolbarSpacer id="_IDGenToolbarSpacer1"/>
-						<OverflowToolbarButton
-							id="_IDGenOverflowToolbarButton0"
-							type="Accept"
-							icon="sap-icon://print"
-							text="{i18n>btn_print}"
-							tooltip="{i18n>btn_print}"
-							press=".onPrintClient"
-						/>
-						<OverflowToolbarButton
-							id="_IDGenOverflowToolbarButton1"
-							type="Accept"
-							icon="sap-icon://create-form"
-							text="{i18n>btn_create}"
-							tooltip="{i18n>btn_create}"
-							press=".onCreateClient"
-						/>
-						<OverflowToolbarButton
-							id="_IDGenOverflowToolbarButton2"
-							type="Accept"
-							icon="sap-icon://edit"
-							text="{i18n>btn_edit}"
-							tooltip="{i18n>btn_edit}"
-							press=".onEditClient"
-						/>
-						<OverflowToolbarButton
-							id="_IDGenOverflowToolbarButton3"
-							type="Reject"
-							icon="sap-icon://delete"
-							text="{i18n>btn_delete}"
-							tooltip="{i18n>btn_delete}"
-							press=".onDeleteBtnPress"
-						/>
-					</OverflowToolbar>
-				</smartTable:customToolbar>
-			</smartTable:SmartTable>
-		</content>
-	</Page>
+  <semantic:FullscreenPage
+    id="fullPage"
+    busy="{ProdProcView>/busy}"
+    title="Monitor"
+    floatingFooter="true"
+    showFooter="true"
+  >
+    <f:DynamicPage id="dynPageScale" headerExpanded="{/headerExpanded}" toggleHeaderOnTitleClick="{/titleClickable}" class="sapUiNoContentPadding">
+      <f:title>
+        <f:DynamicPageTitle id="dynPageScaleTitle">
+          <f:heading>
+            <Title id="title" text="Balança" />
+          </f:heading>
+        </f:DynamicPageTitle>
+      </f:title>
+      <f:header>
+        <f:DynamicPageHeader id="dynPageHeader" pinnable="true">
+          <smartFilterBar:SmartFilterBar id="sfb_scale" entitySet="ZFS_CDS_CLIENTS" persistencyKey="SmartFilter_Explored" liveMode="false">
+            <smartFilterBar:controlConfiguration>
+              <smartFilterBar:ControlConfiguration key="ClientId" visibleInAdvancedArea="true" id="filterId" />
+            </smartFilterBar:controlConfiguration>
+            <smartFilterBar:controlConfiguration>
+              <smartFilterBar:ControlConfiguration key="ClientName" visibleInAdvancedArea="true" id="filterName" />
+            </smartFilterBar:controlConfiguration>
+          </smartFilterBar:SmartFilterBar>
+        </f:DynamicPageHeader>
+      </f:header>
+      <f:content>
+        <IconTabBar id="iconTab" expanded="{device>/isNoPhone}" class="sapUiNoContentPadding" select="onSelectItemScaleTabBar">
+          <items>
+            <IconTabFilter id="iconTab123" text="Balança" key="scaleTabProdProc">
+              <smartTable:SmartTable
+                id="clientsTable"
+                entitySet="ZFS_CDS_CLIENTS"
+                smartFilterId="sfb_scale"
+                tableType="ResponsiveTable"
+                header="{i18n>items}"
+                persistencyKey="SmartTableAnalytical_Explored"
+                class="sapUiResponsiveContentPadding"
+                app:useSmartToggle="true"
+                initiallyVisibleFields="ClientId,ClientName,ClientAddress,Country,ClientPhone"
+                enableAutoBinding="true"
+                showFullScreenButton="true"
+                requestAtLeastFields="ClientId,ClientName"
+              >
+                <Table
+                  id="List"
+                  includeItemInSelection="true"
+                  mode="MultiSelect"
+                  fixedLayout="true"
+                  contextualWidth="auto"
+                  autoPopinMode="true"
+                  growing="true"
+                  growingScrollToLoad="false"
+                  growingThreshold="50"
+                  sticky="ColumnHeaders,HeaderToolbar"
+                />
+                <smartTable:customToolbar>
+                  <OverflowToolbar design="Transparent" id="toolBar">
+                    <ToolbarSpacer id="toolBaarSpacer" />
+                  </OverflowToolbar>
+                </smartTable:customToolbar>
+              </smartTable:SmartTable>
+            </IconTabFilter>
+          </items>
+        </IconTabBar>
+      </f:content>
+    </f:DynamicPage>
+    <semantic:messagesIndicator>
+      <semantic:MessagesIndicator press="onMessagesButtonPress" />
+    </semantic:messagesIndicator>
+
+    <semantic:customFooterContent>
+      <Button id="btn100" icon="sap-icon://add" type="Emphasized" text="New" press="onCreateClient" />
+      <Button id="btn1000" icon="sap-icon://write-new-document" type="Neutral" text="Edit" press="onEditClient" />
+      <Button id="btn200" icon="sap-icon://delete" type="Reject" text="Delete" press="onDeleteBtnPress" />
+    </semantic:customFooterContent>
+
+    <semantic:printAction>
+      <semantic:PrintAction id="_IdPrint" press="onPrintClient" />
+    </semantic:printAction>
+  </semantic:FullscreenPage>
 </mvc:View>

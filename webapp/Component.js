@@ -27,6 +27,8 @@ sap.ui.define([
                 // enable routing
                 this.getRouter().initialize();
 
+                this.setModel(models.createListModel(), "List");
+
                 // set the device model
                 this.setModel(models.createDeviceModel(), "device");
                 // this.setModel(models.createClientModel(), "Clients");

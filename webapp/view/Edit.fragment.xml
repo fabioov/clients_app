@@ -20,26 +20,36 @@
 					id="cpfClient"
 					visible="{= !${editClient>/isEdit}}"
 					mask="999.999.999-99"
-					required="{= ${editClient>/isEdit} ? false : true }"
+					required="{= !${editClient>/isEdit} }"
 				/>
 				<Label text="{i18n>name}"/>
 				<Input
 					id="nameClient"
 					value="{= !${editClient>/isEdit} ? '' : ${ClientName} }"
-					required="{= ${editClient>/isEdit} ? false : true }"
+					required="{= !${editClient>/isEdit} }"
+					showValueHelp="true"
+					valueHelpRequest="onValueHelpClientRequest"
 				/>
 				<Label text="{i18n>address}"/>
 				<Input
 					id="addressClient"
 					value="{= !${editClient>/isEdit} ? '' : ${ClientAddress} }"
-					required="{= ${editClient>/isEdit} ? false : true }"
+					required="{= !${editClient>/isEdit} }"
 				/>
+				<Label text="{i18n>country}"/>
+					<Input
+						id="countryClient"
+						value="{= !${editClient>/isEdit} ? '' : ${Country} }"
+						required="{= !${editClient>/isEdit} }"
+						showValueHelp="true"
+						valueHelpRequest="onValueHelpCountryRequest"
+					/>
 				<Label text="{i18n>phone}"/>
 				<MaskInput
 					id="phoneClient"
 					value="{= !${editClient>/isEdit} ? '' : ${ClientPhone} }"
 					mask="(99) 9 9999 9999"
-					required="{= ${editClient>/isEdit} ? false : true }"
+					required="{= !${editClient>/isEdit} }"
 				/>
 			</f:content>
 		</f:SimpleForm>
@@ -48,13 +58,13 @@
 				text="{i18n>save_btn}"
 				type="Emphasized"
 				press=".onSaveBtnPress"
-				visible="{= ${editClient>/isEdit} ? false : true }"
+				visible="{= !${editClient>/isEdit} }"
 			/>
 			<Button
 				text="{i18n>btn_edit}"
 				type="Emphasized"
 				press=".onUpdateBtnPress"
-				visible="{= !${editClient>/isEdit} ? false : true }"
+				visible="{= ${editClient>/isEdit} }"
 			/>
 			<Button
 				text="{i18n>cancel_btn}"

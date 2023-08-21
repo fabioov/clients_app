@@ -5,23 +5,76 @@ sap.ui.define(
     "sap/ui/core/Fragment",
     "sap/m/MessageToast",
     "sap/m/MessageBox",
+    "sap/m/PDFViewer",
+    "sap/m/Link",
+    "sap/ui/core/UIComponent",
+    "sap/ui/core/message/Message",
+    "sap/m/MessagePopover",
+    "sap/m/MessageItem",
+    "sap/ui/core/Core",
+    "sap/ui/core/library",
+    "sap/ui/core/message/ControlMessageProcessor",
+    "sap/m/StandardListItem",
+    "sap/ui/model/Filter",
+    "sap/ui/model/FilterOperator",
+    "clientsapp/controller/FabiosLib/ValueHelp"
   ],
   /**
    * @param {typeof sap.ui.core.mvc.Controller} Controller
    */
-  function (Controller, JSONModel, Fragment, MessageToast, MessageBox) {
+  function (
+    Controller,
+	JSONModel,
+	Fragment,
+	MessageToast,
+	MessageBox,
+	PDFViewer,
+	Link,
+	UIComponent,
+	Message,
+	MessagePopover,
+	MessageItem,
+	Core,
+	library,
+	ControlMessageProcessor,
+	StandardListItem,
+	Filter,
+	FilterOperator,
+	ValueHelp
+  ) {
     "use strict";
 
     return Controller.extend("clientsapp.controller.View1", {
       onInit: function () {
+        // create any data and a model and set it to the view
+        var oModel = new JSONModel();
+        this.getView().setModel(oModel, "valueHelpModel");
 
       },
 
+      onMessagesButtonPress: function (oEvent) {
+        var oMessagesButton = oEvent.getSource();
+        debugger;
+        if (!this._messagePopover) {
+          this._messagePopover = new MessagePopover({
+            items: {
+              path: "/",
+              template: new MessageItem({
+                description: "Grêmio jogou bem!",
+                type: sap.ui.core.MessageType.Error,
+                title: "Baile na Arena?",
+              }),
+            },
+          });
+          oMessagesButton.addDependent(this._messagePopover);
+        }
+
+        this._messagePopover.toggle(oMessagesButton);
+      },
       onCreateClient: function (oEvent) {
         var oEditClient = this.getView().getModel("editClient");
         oEditClient.setProperty("/isEdit", false);
         var oView = this.getView();
-        debugger;
         if (!this.byId("openDialog")) {
           Fragment.load({
             id: oView.getId(),
@@ -57,6 +110,7 @@ sap.ui.define(
               Id: cpfNumbers,
               Name: oView.byId("nameClient").getValue(),
               Address: oView.byId("addressClient").getValue(),
+              Country: oView.byId("countryClient").getValue(),
               Phone: phoneNumbers,
             },
           ];
@@ -92,15 +146,17 @@ sap.ui.define(
       onEditClient: function () {
         var oEditClient = this.getView().getModel("editClient");
         oEditClient.setProperty("/isEdit", true);
-
+        debugger;
         var oView = this.getView();
 
         var oSmartTable = this.getView().byId("clientsTable").getTable();
         var aSelectedItems = oSmartTable.getSelectedItems();
+        debugger;
 
         if (aSelectedItems.length === 1) {
           var oSelectedItem = aSelectedItems[0];
           var oContext = oSelectedItem.getBindingContext();
+          var oSelectedClient = oContext.getObject();
           var sPath = oContext.getPath();
           oView.bindElement(sPath);
 
@@ -143,6 +199,7 @@ sap.ui.define(
             Name: oView.byId("nameClient").getValue(),
             Address: oView.byId("addressClient").getValue(),
             Phone: phoneNumbers,
+            Country: oView.byId("countryClient").getValue(),
           },
         ];
 
@@ -194,12 +251,22 @@ sap.ui.define(
         };
 
         var oModel = oView.getModel();
+        var oJSONModel = new JSONModel();
+
         var deletedMessage = oView
           .getModel("i18n")
           .getProperty("deletedClient");
 
         oModel.create("/JsonCommSet", payload, {
           success: function (oData, oResponse) {
+            debugger;
+            var jsonPayload = oData.Payload; // Assuming this is your JSON object
+            var array = JSON.parse(jsonPayload);
+
+            oJSONModel.setData(array);
+            oView.setModel(oJSONModel, "List");
+            // this.updateTable(array);
+
             sap.ui.core.BusyIndicator.hide();
             MessageToast.show(deletedMessage);
             oModel.refresh();
@@ -215,42 +282,80 @@ sap.ui.define(
         });
       },
 
-      // onPrintClient: function () {
+      updateTable: function (array) {
+        debugger;
+        var oTable = this.getView().byId("List"); // Ensure this ID matches the one in your view
+        var keys = Object.keys(array[0]); // Get keys from the first object in the array
 
-      //   var oModel = this.getView().getModel();
+        // Clear any previous columns
+        oTable.removeAllColumns();
 
-      //   var oSmartTable = this.getView().byId("clientsTable").getTable();
-      //   var aSelectedItems = oSmartTable.getSelectedItems();
-      //   var item = aSelectedItems[0].getBindingContext().getProperty();
+        // Generate new columns dynamically based on keys
+        for (var i = 0; i < keys.length; i++) {
+          var oColumn = new sap.m.Column({
+            header: new sap.m.Label({
+              text: keys[i],
+            }),
+          });
+          oTable.addColumn(oColumn);
+        }
 
-      //   var ClientData = [];
+        var oTemplate = new sap.m.ColumnListItem({
+          cells: keys.map(function (key) {
+            return new sap.m.Text({
+              text: "{" + key + "}",
+            });
+          }),
+        });
 
-      //   ClientData.push({
-      //     Id: item.ClientId,
-      //   });
+        oTable.bindItems({
+          path: "/",
+          template: oTemplate,
+        });
+      },
 
-      // var payload = {
-      //   Action: "DELETE",
-      //   Payload: JSON.stringify(ClientData),
-      // };
+      onPrintClient: function (
+        Params,
+        Title = "PDF",
+        FileName = "ZFSANTOS_SF_CLIENTSAPP",
+        GetPDF = "X"
+      ) {
+        const oSmartTable = this.getView().byId("clientsTable").getTable();
+        const oItems = oSmartTable.getSelectedItems();
+        const client = oItems[0]?.getBindingContext()?.getProperty();
 
-      //   oModel.read("/PrintSmartFormsSet", payload, {
-      //     success: function (oData, oResponse) {
-      //       sap.ui.core.BusyIndicator.hide();
-      //       MessageToast.show(deletedMessage);
-      //       oModel.refresh();
-      //     }.bind(this),
+        if (oItems.length !== 1) {
+          MessageToast.show(
+            `Selecione ${
+              oItems.length === 0 ? "ao menos um" : "somente um"
+            } cliente!`
+          );
+          return;
+        }
 
-      //     error: function (oError) {
-      //       var oSapMessage = JSON.parse(oError.responseText);
-      //       var msg = oSapMessage.error.message.value;
-      //       MessageToast.show(msg);
-      //       sap.ui.core.BusyIndicator.hide();
-      //       oModel.refresh();
-      //     },
-      //   });
+        var Viewer = new PDFViewer();
+        var clientData = [
+          {
+            Id: client.ClientId,
+          },
+        ];
+        this.getView().addDependent(Viewer);
+        let oModel = this.getView().getModel();
 
-      // },
+        let sPath = oModel.createKey("/PrintSmartFormsSet", {
+          Params: JSON.stringify(clientData),
+          FileName,
+          GetPdf: GetPDF,
+        });
+
+        let sSource = this.getView().getModel().sServiceUrl + sPath + "/$value";
+
+        Viewer.setShowDownloadButton(false);
+        Viewer.setSource(sSource);
+
+        Viewer.setTitle(Title);
+        Viewer.open();
+      },
 
       onCancelBtnPress: function () {
         var oModel = this.getView().getModel();
@@ -262,6 +367,77 @@ sap.ui.define(
           this.byId("editClientFragment").destroy(true);
         }
       },
+
+      onUploadDoc: function (oEvent) {
+        debugger;
+        var oView = this.getView();
+        if (!this.byId("uploadDialog")) {
+          Fragment.load({
+            id: oView.getId(),
+            name: "clientsapp.view.Upload",
+            controller: this,
+          }).then(function (oDialog) {
+            oView.addDependent(oDialog);
+            oDialog.open();
+          });
+        } else {
+          this.byId("uploadDialog").open();
+        }
+      },
+
+      cancelUpldPress: function (oEvent) {
+        if (this.byId("uploadDialog")) {
+          this.byId("uploadDialog").destroy(true);
+        }
+      },
+
+      uploadPress: function (oEvent) {},
+
+      onValueHelpCountryRequest: function (oEvent) {
+        debugger;
+        var valueHelpCall = new ValueHelp();
+        var oView = this.getView();
+        var sEntity = "/ZFS_COUNTRIES_V2";
+        var sModel = "valueHelpModel";
+        var sSearchKey = "CountryName";
+        var sReturnedValue = "CountryKey";
+        var oFieldValueUpdate = this.byId("countryClient");
+        var sValueHelpType = "Country";
+
+
+        valueHelpCall.valueHelpRequest(
+          oView,
+          sEntity,
+          sModel,
+          sSearchKey,
+          sReturnedValue,
+          oFieldValueUpdate,
+          sValueHelpType
+        );
+      },
+
+      onValueHelpClientRequest: function (oEvent) {
+        debugger;
+        var valueHelpCall = new ValueHelp();
+        var oView = this.getView();
+        var sEntity = "/ZFS_CDS_VH_CLIENTS";
+        var sModel = "valueHelpModel";
+        var sSearchKey = "Id";
+        var sReturnedValue = "Name";
+        var oFieldValueUpdate = this.byId("nameClient");
+        var sValueHelpType = "Client";
+
+        valueHelpCall.valueHelpRequest(
+          oView,
+          sEntity,
+          sModel,
+          sSearchKey,
+          sReturnedValue,
+          oFieldValueUpdate,
+          sValueHelpType
+        );
+      },
+
     });
   }
 );

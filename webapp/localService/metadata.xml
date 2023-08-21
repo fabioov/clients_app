@@ -41,6 +41,7 @@
                 <Property Name="ClientId" Type="Edm.String" Nullable="false" MaxLength="11" sap:display-format="UpperCase" sap:label="Client's Id" sap:quickinfo="Id Cliente"/>
                 <Property Name="ClientName" Type="Edm.String" MaxLength="40" sap:display-format="UpperCase" sap:label="Client's Name" sap:quickinfo="Nome Cliente"/>
                 <Property Name="ClientAddress" Type="Edm.String" MaxLength="155" sap:display-format="UpperCase" sap:label="Client's Address" sap:quickinfo="Endereço Cliente"/>
+                <Property Name="ClientCountry" Type="Edm.String" MaxLength="2" sap:display-format="UpperCase" sap:label="Client's Country" sap:quickinfo="País Cliente"/>
                 <Property Name="ClientPhone" Type="Edm.String" MaxLength="15" sap:display-format="UpperCase" sap:label="Client's Phone" sap:quickinfo="Telefone Cliente"/>
             </EntityType>
             <EntityContainer Name="ZRDWP_FSANTOS_CLIENTS_SRV_Entities" m:IsDefaultEntityContainer="true" sap:message-scope-supported="true" sap:supported-formats="atom json xlsx">

@@ -1,0 +1,19 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<SelectDialog
+		id="selectDialog"
+		title="Countries List"
+        items="{
+            path: 'valueHelpModel>/valueHelpModel'
+          }"
+		search=".onValueHelpSearch"
+		confirm=".onValueHelpClose"
+		cancel=".onValueHelpClose"
+        >
+
+        <items>
+          <!-- <StandardListItem title="{valueHelpModel>Name}" /> -->
+            <StandardListItem title="{= ${valueHelpModel>/sValueHelpType} === 'Country' ? ${valueHelpModel>CountryName} : ${valueHelpModel>Name}}"/>
+          </items>
+
+	</SelectDialog>
+</core:FragmentDefinition>

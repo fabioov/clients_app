@@ -41,7 +41,9 @@
       "desktop": true,
       "tablet": true,
       "phone": true
-    }
+    },
+    "supportedThemes": [],
+    "fullWidth": true
   },
   "sap.ui5": {
     "flexEnabled": true,

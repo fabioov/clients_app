@@ -1,0 +1,45 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:unified="sap.ui.unified"
+>
+	<Dialog
+		id="uploadDialog"
+		title="Upload for Batch Input"
+		titleAlignment="Center"
+	>
+		<content>
+			<VBox
+				id="vBoxId"
+				justifyContent="Center"
+				alignItems="Center"
+			>
+				<items>
+					<unified:FileUploader
+						id="fileUploader"
+						name="myFileUpload"
+						uploadUrl="upload/"
+						tooltip="Upload your file to the local server"
+					/>
+				</items>
+			</VBox>
+		</content>
+		<Toolbar id="toolbarId">
+			<content>
+				<Button
+					id="cancelUpldBtn"
+					text="Cancel"
+					type="Reject"
+					press=".cancelUpldPress"
+				/>
+				<ToolbarSpacer id="toolbarSpacerId"/>
+				<Button
+					id="uploadBtn"
+					text="Upload File"
+					type="Accept"
+					press="uploadPress"
+				/>
+			</content>
+		</Toolbar>
+	</Dialog>
+</core:FragmentDefinition>

@@ -18,12 +18,9 @@ sap.ui.define(
         return oModel;
       },
 
-      createClientModel: function () {
+      createListModel: function () {
         var oModel = new JSONModel({
-          ClientId: "",
-          ClientName: "",
-          ClientAddress: "",
-          ClientPhone: "",
+          carrid: "",
         });
         return oModel;
       },
