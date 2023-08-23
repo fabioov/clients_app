@@ -1,18 +1,8 @@
-/* .sapMBarPH{
 
-    background-color: lightseagreen;
-    
-    } */
-
-.progressBar{
-    background-color: lightgreen;
-
-        width: 50px;
-
-      
+.myButton {
+  margin-left: 70px;
+  border-color: 1px solid red;
 }
-
-.myVBox {
-  margin-top: 10px;
-  padding: 2rem;
+.myInput {
+  width: 100px;
 }

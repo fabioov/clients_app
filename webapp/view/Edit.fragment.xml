@@ -1,76 +1,112 @@
 <c:FragmentDefinition
-	xmlns="sap.m"
-	xmlns:c="sap.ui.core"
-	xmlns:f="sap.ui.layout.form"
+    xmlns="sap.m"
+    xmlns:c="sap.ui.core"
+    xmlns:f="sap.ui.layout.form"
 >
-	<Dialog
-		id="editClientFragment"
-		title="{= ${editClient>/isEdit} ? ${i18n>editCustomer} : ${i18n>registerCustomer}}"
-	>
-		<f:SimpleForm
-			id="EditForm"
-			editable="true"
-		>
-			<f:content>
-				<Label
-					text="{i18n>cpf}"
-					visible="{= !${editClient>/isEdit}}"
-				/>
-				<MaskInput
-					id="cpfClient"
-					visible="{= !${editClient>/isEdit}}"
-					mask="999.999.999-99"
-					required="{= !${editClient>/isEdit} }"
-				/>
-				<Label text="{i18n>name}"/>
-				<Input
-					id="nameClient"
-					value="{= !${editClient>/isEdit} ? '' : ${ClientName} }"
-					required="{= !${editClient>/isEdit} }"
-					showValueHelp="true"
-					valueHelpRequest="onValueHelpClientRequest"
-				/>
-				<Label text="{i18n>address}"/>
-				<Input
-					id="addressClient"
-					value="{= !${editClient>/isEdit} ? '' : ${ClientAddress} }"
-					required="{= !${editClient>/isEdit} }"
-				/>
-				<Label text="{i18n>country}"/>
-					<Input
-						id="countryClient"
-						value="{= !${editClient>/isEdit} ? '' : ${Country} }"
-						required="{= !${editClient>/isEdit} }"
-						showValueHelp="true"
-						valueHelpRequest="onValueHelpCountryRequest"
-					/>
-				<Label text="{i18n>phone}"/>
-				<MaskInput
-					id="phoneClient"
-					value="{= !${editClient>/isEdit} ? '' : ${ClientPhone} }"
-					mask="(99) 9 9999 9999"
-					required="{= !${editClient>/isEdit} }"
-				/>
-			</f:content>
-		</f:SimpleForm>
-		<buttons>
-			<Button
-				text="{i18n>save_btn}"
-				type="Emphasized"
-				press=".onSaveBtnPress"
-				visible="{= !${editClient>/isEdit} }"
-			/>
-			<Button
-				text="{i18n>btn_edit}"
-				type="Emphasized"
-				press=".onUpdateBtnPress"
-				visible="{= ${editClient>/isEdit} }"
-			/>
-			<Button
-				text="{i18n>cancel_btn}"
-				type="Default"
-				press=".onCancelBtnPress"
-			/>
-		</buttons>
-	</Dialog>
+
+    <Dialog
+        id="editClientFragment"
+        title="{= ${editClient>/isEdit} ? ${i18n>editCustomer} : ${i18n>registerCustomer}}"
+    >
+        <f:SimpleForm
+            id="EditForm"
+            editable="true"
+        >
+            <f:content>
+                <Label
+                    text="{i18n>cpf}"
+                    visible="{= !${editClient>/isEdit}}"
+                />
+                <MaskInput
+                    id="cpfClient"
+                    visible="{= !${editClient>/isEdit}}"
+                    mask="999.999.999-99"
+                    required="{= !${editClient>/isEdit} }"
+                />
+                <Label text="{i18n>name}" />
+                <Input
+                    id="nameClient"
+                    value="{= !${editClient>/isEdit} ? '' : ${ClientName} }"
+                    required="{= !${editClient>/isEdit} }"
+                />
+                <Label text="{i18n>country}" />
+                <Input
+                    id="countryClient"
+                    value="{= !${editClient>/isEdit} ? '' : ${Country} }"
+                    required="{= !${editClient>/isEdit} }"
+                    showValueHelp="true"
+                    valueHelpRequest="onValueHelpCountryRequest"
+                />
+                <Label text="{i18n>state}" />
+                <Input
+                    id="stateClient"
+                    value="{= !${editClient>/isEdit} ? '' : ${State} }"
+                    required="{= !${editClient>/isEdit} }"
+                    showValueHelp="true"
+                    valueHelpRequest="onApiValueHelpStateRequest"
+                />
+                <Label text="{i18n>city}" />
+                <Input
+                    id="cityClient"
+                    value="{= !${editClient>/isEdit} ? '' : ${City} }"
+                    required="{= !${editClient>/isEdit} }"
+                />
+                <Label text="{i18n>zipcode}"/>
+                    <HBox alignItems="Center">
+                        <Input
+                          id="zipcodeClient"
+                          value="{= !${editClient>/isEdit} ? '' : ${ZipCode} }"
+                          required="{= !${editClient>/isEdit} }"
+                          class="myInput"
+                          />
+
+                        <Button
+                          text="Search"
+                          press="onZipCodeSearch"
+                          class="myButton"
+                        />
+                      </HBox>
+                      
+                <Label text="{i18n>address}" />
+                <Input
+                    id="addressClient"
+                    value="{= !${editClient>/isEdit} ? '' : ${ClientAddress} }"
+                    required="{= !${editClient>/isEdit} }"
+                />
+
+                <Label text="{i18n>phone}" />
+                <MaskInput
+                    id="phoneClient"
+                    value="{= !${editClient>/isEdit} ? '' : ${ClientPhone} }"
+                    mask="(99) 9 9999 9999"
+                    required="{= !${editClient>/isEdit} }"
+                />
+            </f:content>
+        </f:SimpleForm>
+        <buttons>
+            <Button
+                text="{i18n>save_btn}"
+                type="Emphasized"
+                press=".onSaveBtnPress"
+                visible="{= !${editClient>/isEdit} }"
+            />
+            <Button
+                text="{i18n>btn_edit}"
+                type="Emphasized"
+                press=".onUpdateBtnPress"
+                visible="{= ${editClient>/isEdit} }"
+            />
+            <Button
+                text="{i18n>cancel_btn}"
+                type="Default"
+                press=".onCancelBtnPress"
+            />
+
+            <Button
+                text="{i18n>api}"
+                type="Default"
+                press=".getCepData"
+            />
+        </buttons>
+    </Dialog>
 </c:FragmentDefinition>

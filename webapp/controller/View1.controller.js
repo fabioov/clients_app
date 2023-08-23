@@ -17,7 +17,9 @@ sap.ui.define(
     "sap/m/StandardListItem",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
-    "clientsapp/controller/FabiosLib/ValueHelp"
+    "clientsapp/controller/FabiosLib/ValueHelp",
+    "clientsapp/controller/FabiosLib/ApiValueHelp",
+    "clientsapp/model/formatter"
   ],
   /**
    * @param {typeof sap.ui.core.mvc.Controller} Controller
@@ -40,16 +42,18 @@ sap.ui.define(
 	StandardListItem,
 	Filter,
 	FilterOperator,
-	ValueHelp
+	ValueHelp,
+	ApiValueHelp,
+	formatter
   ) {
     "use strict";
 
     return Controller.extend("clientsapp.controller.View1", {
+      formatter: formatter,
       onInit: function () {
         // create any data and a model and set it to the view
         var oModel = new JSONModel();
         this.getView().setModel(oModel, "valueHelpModel");
-
       },
 
       onMessagesButtonPress: function (oEvent) {
@@ -110,6 +114,7 @@ sap.ui.define(
               Id: cpfNumbers,
               Name: oView.byId("nameClient").getValue(),
               Address: oView.byId("addressClient").getValue(),
+              ZipCode: oView.byId("zipcodeClient").getValue(),
               Country: oView.byId("countryClient").getValue(),
               Phone: phoneNumbers,
             },
@@ -200,6 +205,7 @@ sap.ui.define(
             Address: oView.byId("addressClient").getValue(),
             Phone: phoneNumbers,
             Country: oView.byId("countryClient").getValue(),
+            ZipCode: oView.byId("zipcodeClient").getValue(),
           },
         ];
 
@@ -403,8 +409,7 @@ sap.ui.define(
         var sReturnedValue = "CountryKey";
         var oFieldValueUpdate = this.byId("countryClient");
         var sValueHelpType = "Country";
-
-
+        
         valueHelpCall.valueHelpRequest(
           oView,
           sEntity,
@@ -414,30 +419,66 @@ sap.ui.define(
           oFieldValueUpdate,
           sValueHelpType
         );
+
+        var oStateClient = this.byId("stateClient")
+
+        oStateClient.setValue("");
       },
 
-      onValueHelpClientRequest: function (oEvent) {
+      onApiValueHelpStateRequest: function (oEvent) {
         debugger;
-        var valueHelpCall = new ValueHelp();
+        var apiValueHelpCall = new ApiValueHelp();
         var oView = this.getView();
-        var sEntity = "/ZFS_CDS_VH_CLIENTS";
+        var sUrl = "https://countriesnow.space/api/v0.1/countries/states";
         var sModel = "valueHelpModel";
-        var sSearchKey = "Id";
-        var sReturnedValue = "Name";
-        var oFieldValueUpdate = this.byId("nameClient");
-        var sValueHelpType = "Client";
+        var sMethod = "POST";
+        var sContentType = "application/json";
+        var sReturnedValue = "name";
+        var sReturnedValue2 = "";
+        var oFieldValueUpdate = this.byId("stateClient");
+        var sFieldForSearch = this.byId("countryClient").getValue();
+        var sValueHelpType = "State";
 
-        valueHelpCall.valueHelpRequest(
+        apiValueHelpCall.valueHelpRequest(
           oView,
-          sEntity,
+          sUrl,
           sModel,
-          sSearchKey,
+          sMethod,
+          sContentType,
           sReturnedValue,
+          sReturnedValue2,
           oFieldValueUpdate,
+          sFieldForSearch,
           sValueHelpType
         );
+
+        var oStateClient = this.byId("cityClient")
+
+        oStateClient.setValue("");
+      },
+      onZipCodeSearch: function () {
+        var that = this;
+        var oZipCodeClient = that.byId("addressClient");
+        oZipCodeClient.setValue("");
+        var sFieldForSearch = this.byId("zipcodeClient").getValue();
+        debugger
+        jQuery.ajax({
+          url: `https://viacep.com.br/ws/${sFieldForSearch}/json/`,
+          type: "GET",
+          success: function (data) {
+            debugger;
+            
+            oZipCodeClient.setValue(`${data.logradouro}, Nr____, ${data.bairro}`);
+          },
+          error: function (textStatus, errorThrown) {
+            // Handle the error response
+            console.error("Error:", textStatus, errorThrown);
+          },
+        });
+
       },
 
+     
     });
   }
 );

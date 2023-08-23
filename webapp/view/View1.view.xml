@@ -49,7 +49,7 @@
                 persistencyKey="SmartTableAnalytical_Explored"
                 class="sapUiResponsiveContentPadding"
                 app:useSmartToggle="true"
-                initiallyVisibleFields="ClientId,ClientName,ClientAddress,Country,ClientPhone"
+                initiallyVisibleFields="ClientId,ClientName,Country,State,City,ZipCode,ClientAddress,ClientPhone"
                 enableAutoBinding="true"
                 showFullScreenButton="true"
                 requestAtLeastFields="ClientId,ClientName"

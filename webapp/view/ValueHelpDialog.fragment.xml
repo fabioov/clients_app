@@ -1,4 +1,4 @@
-<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout">
 	<SelectDialog
 		id="selectDialog"
 		title="Countries List"
@@ -11,9 +11,16 @@
         >
 
         <items>
-          <!-- <StandardListItem title="{valueHelpModel>Name}" /> -->
-            <StandardListItem title="{= ${valueHelpModel>/sValueHelpType} === 'Country' ? ${valueHelpModel>CountryName} : ${valueHelpModel>Name}}"/>
-          </items>
+          <!-- <StandardListItem title="{apiValueHelpModel>name}" /> -->
+             <!-- <StandardListItem id="StandardListItem"
+            title="{path: 'valueHelpModel>sValueHelpType', formatter: '.formatter.valueHelpType'}"
+          />  -->
+          <StandardListItem
+          title="{= ${valueHelpModel>/sValueHelpType} === 'Country' ? ${valueHelpModel>CountryName} : ${valueHelpModel>/sValueHelpType} === 'State' ? ${valueHelpModel>name} : ${valueHelpModel>code}}"
+        />
+        
+
+            </items>
 
 	</SelectDialog>
 </core:FragmentDefinition>

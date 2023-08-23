@@ -5,11 +5,18 @@ sap.ui.define(
     "sap/ui/model/FilterOperator",
     "sap/ui/core/Fragment",
     "sap/m/MessageToast",
+    "clientsapp/model/formatter"
   ],
-  function (ManagedObject, Filter, FilterOperator, Fragment, MessageToast) {
+  function (ManagedObject,
+	Filter,
+	FilterOperator,
+	Fragment,
+	MessageToast,
+	formatter) {
     "use strict";
 
     return ManagedObject.extend("clientsapp.controller.FabiosLib.ValueHelp", {
+      formatter: formatter,
       onInit: function () {},
 
       valueHelpRequest: function (
@@ -88,6 +95,10 @@ sap.ui.define(
         this._sCountryKey = oSelectedItem
           .getBindingContext(this._sModel)
           .getProperty(this._sReturnedValue);
+
+          this._sCountryName = oSelectedItem
+          .getBindingContext(this._sModel)
+          .getProperty("CountryName");
 
         this._oFieldValueUpdate.setValue(this._sCountryKey);
 
