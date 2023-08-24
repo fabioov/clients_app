@@ -123,7 +123,7 @@ sap.ui.define([
       };
 
       var busyIndicator = new BusyIndicator();
-      busyIndicator.showBusyIndicator(1000, 0);
+      busyIndicator.showBusyIndicator(500, 0);
 
       jQuery.ajax({
         url: this._sUrl,

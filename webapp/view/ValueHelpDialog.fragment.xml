@@ -11,10 +11,6 @@
         >
 
         <items>
-          <!-- <StandardListItem title="{apiValueHelpModel>name}" /> -->
-             <!-- <StandardListItem id="StandardListItem"
-            title="{path: 'valueHelpModel>sValueHelpType', formatter: '.formatter.valueHelpType'}"
-          />  -->
           <StandardListItem
           title="{= ${valueHelpModel>/sValueHelpType} === 'Country' ? ${valueHelpModel>CountryName} : ${valueHelpModel>/sValueHelpType} === 'State' ? ${valueHelpModel>name} : ${valueHelpModel>code}}"
         />

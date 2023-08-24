@@ -64,6 +64,7 @@
                         <Button
                           text="Search"
                           press="onZipCodeSearch"
+                          type="Accept"
                           class="myButton"
                         />
                       </HBox>
@@ -99,7 +100,7 @@
             />
             <Button
                 text="{i18n>cancel_btn}"
-                type="Default"
+                type="Reject"
                 press=".onCancelBtnPress"
             />
         </buttons>
