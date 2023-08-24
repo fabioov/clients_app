@@ -53,10 +53,11 @@
                 />
                 <Label text="{i18n>zipcode}"/>
                     <HBox alignItems="Center">
-                        <Input
+                        <MaskInput
                           id="zipcodeClient"
                           value="{= !${editClient>/isEdit} ? '' : ${ZipCode} }"
                           required="{= !${editClient>/isEdit} }"
+                          mask="99999-999"
                           class="myInput"
                           />
 

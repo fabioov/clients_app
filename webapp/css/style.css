@@ -1,8 +1,9 @@
 
 .myButton {
-  margin-left: 70px;
+  margin-left: 10px;
+  width: 100px;
   border-color: 1px solid red;
 }
 .myInput {
-  width: 100px;
+  width: 200px;
 }
