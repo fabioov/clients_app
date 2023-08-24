@@ -18,7 +18,7 @@ sap.ui.define([
             return fetch(url, FETCH_OPTIONS)
               .then((response) => response.json())
               .catch((error) => {
-                console.error(`HTTP Request Error: ${error}`);
+                logger.error(`Error: ${error}`);
                 throw error;
               });
           },
