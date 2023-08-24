@@ -101,12 +101,6 @@
                 type="Default"
                 press=".onCancelBtnPress"
             />
-
-            <Button
-                text="{i18n>api}"
-                type="Default"
-                press=".getCepData"
-            />
         </buttons>
     </Dialog>
 </c:FragmentDefinition>
