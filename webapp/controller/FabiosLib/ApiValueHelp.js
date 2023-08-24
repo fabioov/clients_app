@@ -5,20 +5,21 @@ sap.ui.define(
     "sap/ui/model/FilterOperator",
     "sap/ui/core/Fragment",
     "sap/m/MessageToast",
-    "clientsapp/model/formatter"
+    "clientsapp/model/formatter",
   ],
-  function (ManagedObject,
-	Filter,
-	FilterOperator,
-	Fragment,
-	MessageToast,
-	formatter) {
+  function (
+    ManagedObject,
+    Filter,
+    FilterOperator,
+    Fragment,
+    MessageToast,
+    formatter
+  ) {
     "use strict";
 
     return ManagedObject.extend(
       "clientsapp.controller.FabiosLib.ApiValueHelp",
       {
-        formatter: formatter,
         onInit: function () {},
 
         valueHelpRequest: function (
@@ -28,23 +29,19 @@ sap.ui.define(
           sMethod,
           sContentType,
           sReturnedValue,
-          sReturnedValue2,
           oFieldValueUpdate,
           sFieldForSearch,
           sValueHelpType
         ) {
-          this._oODataModel = oView.getModel();
           this._sModel = sModel;
           this._sMethod = sMethod;
-
           this._sContentType = sContentType;
           this._sUrl = sUrl;
           this._oView = oView;
           this._sReturnedValue = sReturnedValue;
-          this._sReturnedValue2 = sReturnedValue2;
           this._oFieldValueUpdate = oFieldValueUpdate;
 
-          this._sFieldForSearch = sFieldForSearch;;
+          this._sFieldForSearch = sFieldForSearch;
 
           this._sValueHelpType = sValueHelpType;
 
@@ -58,25 +55,22 @@ sap.ui.define(
               return oDialog;
             });
           }
-            this._pValueHelpDialog.then(
+          this._pValueHelpDialog.then(
             function (oDialog) {
-            
               var requestData = {
                 iso2: this._sFieldForSearch,
               };
-            
-              debugger;
+
               jQuery.ajax({
                 url: this._sUrl,
                 type: this._sMethod,
-                contentType: sContentType,
+                contentType: this._sContentType,
                 data: JSON.stringify(requestData),
-                success: function (oData, textStatus, jqXHR) {
-                  var oModel = oView.getModel(sModel);
+                success: function (oData) {
+                  var oModel = oView.getModel(this._sModel);
                   var sModelSetName = "/" + sModel;
-                  debugger
+                  debugger;
                   oModel.setProperty(sModelSetName, oData.data.states);
-
                 }.bind(this),
                 error: function (jqXHR, textStatus, errorThrown) {
                   // Handle the error response
@@ -88,7 +82,7 @@ sap.ui.define(
               oDialog
                 .getModel(this._sModel)
                 .setProperty("/sValueHelpType", this._sValueHelpType);
-                debugger
+              debugger;
             }.bind(this)
           );
         },
@@ -108,47 +102,44 @@ sap.ui.define(
             return;
           }
 
-          this._sCountryKey = oSelectedItem
+          this._sStateKey = oSelectedItem
             .getBindingContext(this._sModel)
             .getProperty(this._sReturnedValue);
 
-          this._oFieldValueUpdate.setValue(this._sCountryKey);
+          this._oFieldValueUpdate.setValue(this._sStateKey);
 
           this.readValueHelpData();
         },
 
         readValueHelpData: function () {
-          var searchKey;
-          if (this._sValue) {
-            searchKey = this._sValue;
-          } else {
-            searchKey = this._sCountryKey;
-          }
-
-          this._oODataModel.read(this._sEntity, {
-            success: function (oData, oResponse) {
-              debugger;
+          var requestData = {
+            iso2: this._sFieldForSearch,
+          };
+          debugger;
+          jQuery.ajax({
+            url: this._sUrl,
+            type: this._sMethod,
+            contentType: this._sContentType,
+            data: JSON.stringify(requestData),
+            success: function (oData) {
               var oModel = this._oView.getModel(this._sModel);
               var sModelSetName = "/" + this._sModel;
-              oModel.setProperty(sModelSetName, oData.results);
-
-              var aFilteredData = oData.results.filter(
+              debugger;
+              var aFilteredData = oData.data.states.filter(
                 function (item) {
-                  return item[this._sSearchKey]
+                  return item[this._sReturnedValue]
                     .toLowerCase()
-                    .includes(searchKey.toLowerCase());
+                    .includes(this._sValue.toLowerCase());
                 }.bind(this)
               );
+
               oModel.setProperty(sModelSetName, aFilteredData);
+
+              debugger;
             }.bind(this),
-            error: function (err) {
-              console.error(
-                "Error occurred during ODataModel read operation:",
-                err
-              );
-              MessageToast.show(
-                "An error occurred while fetching data. Please try again later."
-              );
+            error: function (jqXHR, textStatus, errorThrown) {
+              // Handle the error response
+              console.error("Error:", textStatus, errorThrown);
             },
           });
         },

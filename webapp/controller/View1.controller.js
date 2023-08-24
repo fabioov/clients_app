@@ -434,7 +434,6 @@ sap.ui.define(
         var sMethod = "POST";
         var sContentType = "application/json";
         var sReturnedValue = "name";
-        var sReturnedValue2 = "";
         var oFieldValueUpdate = this.byId("stateClient");
         var sFieldForSearch = this.byId("countryClient").getValue();
         var sValueHelpType = "State";
@@ -446,7 +445,6 @@ sap.ui.define(
           sMethod,
           sContentType,
           sReturnedValue,
-          sReturnedValue2,
           oFieldValueUpdate,
           sFieldForSearch,
           sValueHelpType
